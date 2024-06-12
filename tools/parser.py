@@ -63,7 +63,13 @@ class Parser:
 
                 space_units_count: int = len(stroke) - len(stroke.lstrip())
 
-                strokes[strokes.index(stroke)] = ' ' * space_units_count + sp.get_space()
+                strokes = '\n'.join(strokes).replace(stroke, ' ' * space_units_count + sp.get_space(), 1)
+
+                strokes = strokes.split('\n')
+
+                break
+
+                #strokes[strokes.index(stroke)] = ' ' * space_units_count + sp.get_space()
 
         with open(file='output.html', mode='w', encoding='UTF-8') as output:
 
