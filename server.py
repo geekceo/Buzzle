@@ -1,14 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
 from tools import parser
+import urls
 
 import sys
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-
-    def open_home(httpr: SimpleHTTPRequestHandler):
-
-        httpr.wfile.write(bytes("HOME", encoding='UTF-8'))
-
 
     def do_GET(self):
         parser.Parser(html='test.html').parse()
@@ -17,13 +13,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         #self.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
 
-        if self.path == '/home':
+        for path in urls.urlpathes:
 
-            self.open_home()
+            if path.path == self.path:
 
-        else:
+                path.controller(self)
 
-            self.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
+        
 
         
 
