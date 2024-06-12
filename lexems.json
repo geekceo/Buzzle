@@ -2,6 +2,5 @@
     "if": "IF",
     "for": "FOR",
     "debug": "DEBUG",
-    "let": "LET",
-    "=": "ASSIGN"
+    "let": "LET"
 }

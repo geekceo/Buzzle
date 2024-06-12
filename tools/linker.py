@@ -13,4 +13,4 @@ class Linker:
         @staticmethod
         def get_var(key: any):
 
-            return os.environ[key]
+            return os.environ.get(key, default=None)

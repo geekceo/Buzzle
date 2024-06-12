@@ -1,5 +1,6 @@
 import json
-from tools import parser, space
+from tools import parser, space, linker
+import re
 
 '''
     Lexer to find buzzle code blocks
@@ -19,27 +20,27 @@ class Lexer:
 
                 stroke = stroke.strip() # remove space from right and left sides of code stroke
 
-                print(stroke)
+                #print(stroke)
 
                 prompt: str = stroke.replace('[$', '').replace('$]', '') # remove Buzzle markers
 
                 prompt_units: list = prompt.split(' ') # divide stroke by words
 
-                print(prompt_units)
+                #print(prompt_units)
 
                 '''Look for correct lexems in founded block'''
                 for lexem, desk in cls.lexems.items():
 
                     if lexem in prompt_units:
 
-                        print(f'{lexem}: {desk}')
+                        #print(f'{lexem}: {desk}')
 
                         prompt_units.remove(lexem) # remove founded lexem from code stroke to get next stroke unit
 
                         if desk == 'DEBUG':
 
                             value: str = [unit for unit in prompt_units if unit != ''] # make value for debug space
-                            print(value)
+                            #print(value)
 
                         elif desk == 'LET':
 
@@ -48,6 +49,36 @@ class Lexer:
                         #sp: space.Space = space.Space(desk=desk, value=value)
 
                         parser.Parser.write(sp=space.Space(desk=desk, value=value))
+
+            elif ('[[' in stroke) and (']]' in stroke):
+
+                stroke: str = stroke.strip() # remove space from right and left sides of code stroke
+                print(stroke)
+
+                #print(stroke)
+
+                #prompt: str = stroke.replace('[$', '').replace('$]', '') # remove Buzzle markers
+
+                #prompt_units: list = prompt.split(' ') # divide stroke by words
+
+                matches = re.findall(r'\[\[\s*\$\w{1,}\s*\]\]', stroke)
+
+                for match in matches:
+
+                    unit: str = re.search(r'\$\w{1,}', match)[0]
+
+                    unit = unit.split('$')[1]
+
+                    var_value = linker.Linker.Storage.get_var(unit)
+
+                    if var_value != None:
+
+                        stroke = stroke.replace(match, var_value, 1)
+
+                        print(stroke)
+
+                parser.Parser.write(sp=space.Space(desk=match, value=stroke))
+
 
 
 

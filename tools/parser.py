@@ -25,6 +25,8 @@ class Parser:
     @staticmethod
     def write(sp: space.Space):
 
+        print('*** PARSER WRITE ***')
+
         strokes: list = open(file='output.html', mode='r', encoding='UTF-8').read().split('\n')
 
         lexems: dict = json.loads(open(file='lexems.json', mode='r', encoding='UTF-8').read())
@@ -47,10 +49,21 @@ class Parser:
 
                         if desk == sp.desk:
 
+                            #print(f'{sp.desk}: {sp.value}')
+
                             strokes[strokes.index(stroke)] = ' ' * space_units_count + sp.get_space()
+                            #print(' ' * space_units_count + sp.get_space())
 
                 break
+
+            elif ('[[' in stroke) and (']]' in stroke):
+
+                space_units_count: int = len(stroke) - len(stroke.lstrip())
+
+                strokes[strokes.index(stroke)] = ' ' * space_units_count + sp.get_space()
 
         with open(file='output.html', mode='w', encoding='UTF-8') as output:
 
             output.write('\n'.join(strokes))
+
+        print('********************')
