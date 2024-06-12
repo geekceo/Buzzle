@@ -38,6 +38,7 @@ class Space:
 
         print(space)
 
+        '''if variable mech was founded'''
         if '[[' in self.desk:
 
             space = self.value

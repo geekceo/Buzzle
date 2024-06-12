@@ -50,25 +50,24 @@ class Lexer:
 
                         parser.Parser.write(sp=space.Space(desk=desk, value=value))
 
-            elif ('[[' in stroke) and (']]' in stroke):
+            elif ('[[' in stroke) and (']]' in stroke): #for variable using blocks
 
                 stroke: str = stroke.strip() # remove space from right and left sides of code stroke
                 print(stroke)
 
-                #print(stroke)
-
-                #prompt: str = stroke.replace('[$', '').replace('$]', '') # remove Buzzle markers
-
-                #prompt_units: list = prompt.split(' ') # divide stroke by words
-
+                # find the variable units in block
                 matches = re.findall(r'\[\[\s*\$\w{1,}\s*\]\]', stroke)
 
+                # loop for all matches of units
                 for match in matches:
 
+                    '''Find the variable name'''
                     unit: str = re.search(r'\$\w{1,}', match)[0]
 
+                    '''Remove variable marker from name'''
                     unit = unit.split('$')[1]
 
+                    '''Get the variable value'''
                     var_value = linker.Linker.Storage.get_var(unit)
 
                     if var_value != None:
@@ -77,6 +76,7 @@ class Lexer:
 
                         print(stroke)
 
+                '''Create a parser with desk is match unit and value is new stroke with variable values instead variable buzzle blocks'''
                 parser.Parser.write(sp=space.Space(desk=match, value=stroke))
 
 

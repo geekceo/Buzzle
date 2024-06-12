@@ -37,10 +37,13 @@ class Parser:
 
                 handle_stroke = stroke.strip()
 
+                '''remove func block markers'''
                 prompt: str = handle_stroke.replace('[$', '').replace('$]', '')
 
+                '''divide block content for any units'''
                 prompt_units: list = prompt.split(' ')
 
+                '''calculate spaces from start of stroke'''
                 space_units_count: int = len(stroke) - len(stroke.lstrip())
 
                 for lexem, desk in lexems.items():
