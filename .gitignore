@@ -1,0 +1,5 @@
+main.py
+*.html
+__pycache__
+config.json
+urls.py
