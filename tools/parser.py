@@ -25,7 +25,7 @@ class Parser:
     @staticmethod
     def write(sp: space.Space):
 
-        print('*** PARSER WRITE ***')
+        #print('*** PARSER WRITE ***')
 
         strokes: list = open(file='output.html', mode='r', encoding='UTF-8').read().split('\n')
 
@@ -75,4 +75,4 @@ class Parser:
 
             output.write('\n'.join(strokes))
 
-        print('********************')
+        #print('********************')

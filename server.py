@@ -1,6 +1,7 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
-from tools import parser
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from tools import parser, webserver
 import urls
+import json
 
 import sys
 
@@ -13,11 +14,31 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         #self.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
 
+        '''Loop for all urls from custom urls.py file'''
         for path in urls.urlpathes:
 
-            if path.path == self.path:
+            if path.path in self.path:
 
-                path.controller(self)
+                '''Send first request as argument to parse base data'''
+                request: webserver.Request = webserver.Request(b_request=self.__dict__)
+
+                path.controller(request)
+
+    def do_POST(self):
+
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+        for path in urls.urlpathes:
+
+            if path.path in self.path:
+
+                '''Send first request as argument to parse base data'''
+                request: webserver.Request = webserver.Request(b_request=self.__dict__)
+
+                path.controller(request)
+
 
         
 

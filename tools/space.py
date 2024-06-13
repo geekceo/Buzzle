@@ -36,7 +36,7 @@ class Space:
 
             space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
 
-        print(space)
+        #print(space)
 
         '''if variable mech was founded'''
         if '[[' in self.desk:
@@ -50,7 +50,7 @@ class Space:
         self.desk: str = desk
         self.value: any = value
 
-        print(f'{self.desk}: {self.value}')
+        #print(f'{self.desk}: {self.value}')
 
         self.space = self.__create_space()
 

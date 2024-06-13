@@ -53,7 +53,7 @@ class Lexer:
             elif ('[[' in stroke) and (']]' in stroke): #for variable using blocks
 
                 stroke: str = stroke.strip() # remove space from right and left sides of code stroke
-                print(stroke)
+                #print(stroke)
 
                 # find the variable units in block
                 matches = re.findall(r'\[\[\s*\$\w{1,}\s*\]\]', stroke)
@@ -74,7 +74,7 @@ class Lexer:
 
                         stroke = stroke.replace(match, var_value, 1)
 
-                        print(stroke)
+                        #print(stroke)
 
                 '''Create a parser with desk is match unit and value is new stroke with variable values instead variable buzzle blocks'''
                 parser.Parser.write(sp=space.Space(desk=match, value=stroke))
