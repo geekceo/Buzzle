@@ -68,7 +68,7 @@ class Lexer:
                     unit = unit.split('$')[1]
 
                     '''Get the variable value'''
-                    var_value = linker.Linker.Storage.get_var(unit)
+                    var_value = linker.Linker.Storage.get_var(template_name='test.html', key=unit)
 
                     if var_value != None:
 

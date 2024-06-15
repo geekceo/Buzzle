@@ -19,7 +19,7 @@ class Space:
 
                     unit = unit.replace('$', '') # remove var buzzle char to get var name
 
-                    units.append(linker.Linker.Storage.get_var(key=unit)) # get var value
+                    units.append(linker.Linker.Storage.get_var(template_name='test.html', key=unit)) # get var value
 
                 else:
 
@@ -32,7 +32,7 @@ class Space:
 
             key, value = self.value
 
-            linker.Linker.Storage.set_var(key=key, value=value)
+            linker.Linker.Storage.set_var(template_name='test.html', key=key, value=value)
 
             space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
 
