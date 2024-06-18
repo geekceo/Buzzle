@@ -8,9 +8,13 @@ class Space:
 
         space: str = ''
 
+        #print(self.desk)
+
         if self.desk == 'DEBUG':
 
             units: list = []
+
+            print(self.value)
 
             for unit in self.value:
 
@@ -25,12 +29,15 @@ class Space:
 
                     units.append(unit)
 
+
             space = f"<h1>{' '.join(units)}</h1>" # create debug tag via <h1>
 
         '''Look for varible assignment'''
         if self.desk == 'LET':
 
             key, value = self.value
+
+            print(f'{key} : {value}')
 
             linker.Linker.Storage.set_var(template_name='test.html', key=key, value=value)
 

@@ -1,14 +1,16 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from tools import parser, webserver
+from tools import parser, webserver, linker
 import urls
 import json
+import config
 
 import sys
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        parser.Parser(html='test.html').parse()
+        #parser.Parser(html='test.html').parse()
+        linker.Linker.Storage.init_templates(templates=config.TEMPLATES)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -57,7 +59,12 @@ def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, ip='127
         httpd.shutdown()
         httpd.serve_forever()
 
+    linker.Linker.Storage.init_templates(templates=config.TEMPLATES)
+
+    #print(linker.Linker.Storage.get_template_content('base.html'))
+
     try:
+
         httpd.serve_forever()
 
     except KeyboardInterrupt:

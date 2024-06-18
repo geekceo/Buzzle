@@ -1,92 +1,78 @@
-import json
 from tools import parser, space, linker
 import re
+import json
 
-'''
-    Lexer to find buzzle code blocks
-'''
 class Lexer:
 
-    @classmethod
-    def __find_lexems(cls):
+	@classmethod
+	def __find_lexems(cls):
 
-        '''
-        Loop for each stroke of code
-        '''
-        for stroke in cls.strokes:
+		for stroke in cls.strokes:
 
-            '''Look for Buzzle blocks'''
-            if ('[$' in stroke) and ('$]' in stroke):
+			'''Find a blocks'''
 
-                stroke = stroke.strip() # remove space from right and left sides of code stroke
+			func_block = re.findall(pattern=r'\[\$.{0,}\$\]', string=stroke) # re functional block
 
-                #print(stroke)
+			var_block = re.findall(pattern=r'\[\[\s{0,}\$\w{0,}\s{0,}\]\]', string=stroke)# re variable block
 
-                prompt: str = stroke.replace('[$', '').replace('$]', '') # remove Buzzle markers
+			html_record: any
 
-                prompt_units: list = prompt.split(' ') # divide stroke by words
+			if func_block:
 
-                #print(prompt_units)
+				'''Find existing lexem in current block'''
 
-                '''Look for correct lexems in founded block'''
-                for lexem, desk in cls.lexems.items():
+				lexem_data: str
 
-                    if lexem in prompt_units:
+				for lexem, desk in cls.lexems.items():
 
-                        #print(f'{lexem}: {desk}')
+					re_lexem = re.findall(pattern=f'({lexem})', string=func_block[0])
 
-                        prompt_units.remove(lexem) # remove founded lexem from code stroke to get next stroke unit
+					if re_lexem: 
 
-                        if desk == 'DEBUG':
+						lexem_data = {'lexem_value': lexem, 'lexem_type': desk}
+						
+						break
 
-                            value: str = [unit for unit in prompt_units if unit != ''] # make value for debug space
-                            #print(value)
+				if lexem_data['lexem_type'] == 'DEBUG':
 
-                        elif desk == 'LET':
+					re_arg = re.findall(pattern=r'(?<=debug)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])
 
-                            value: str = (data for data in ''.join(prompt_units).replace(' ', '').split('=')) # get vars key and value
+					value = re_arg[0].strip()
 
-                        #sp: space.Space = space.Space(desk=desk, value=value)
+					html_record = space.Space(desk=lexem_data['lexem_type'], value=value)
 
-                        parser.Parser.write(sp=space.Space(desk=desk, value=value))
+				elif lexem_data['lexem_type'] == 'LET':
 
-            elif ('[[' in stroke) and (']]' in stroke): #for variable using blocks
+					var_name = re.findall(pattern=r'(?<=let)\s{0,}\S{0,}\s{0,}(?=\=)', string=func_block[0])[0].strip()
+					var_value = re.findall(pattern=r'(?<=\=)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])[0].strip()
 
-                stroke: str = stroke.strip() # remove space from right and left sides of code stroke
-                #print(stroke)
+					html_record = space.Space(desk=lexem_data['lexem_type'], value=(var_name, var_value))
 
-                # find the variable units in block
-                matches = re.findall(r'\[\[\s*\$\w{1,}\s*\]\]', stroke)
+			elif var_block:
 
-                # loop for all matches of units
-                for match in matches:
+				...
 
-                    '''Find the variable name'''
-                    unit: str = re.search(r'\$\w{1,}', match)[0]
+			else:
 
-                    '''Remove variable marker from name'''
-                    unit = unit.split('$')[1]
+				html_record = stroke
 
-                    '''Get the variable value'''
-                    var_value = linker.Linker.Storage.get_var(template_name='test.html', key=unit)
+			record: str = html_record.get_space() if isinstance(html_record, space.Space) else html_record
 
-                    if var_value != None:
+			linker.Linker.Storage.write_template(template='base.html', stroke=record)
 
-                        stroke = stroke.replace(match, var_value, 1)
+		parser.Parser.write()
 
-                        #print(stroke)
-
-                '''Create a parser with desk is match unit and value is new stroke with variable values instead variable buzzle blocks'''
-                parser.Parser.write(sp=space.Space(desk=match, value=stroke))
+		#print(linker.Linker.Storage.get_template_content(template='base.html'))
 
 
 
 
-
-    def __new__(cls, strokes: list):
+	def __new__(cls, strokes: list):
         
-        cls.strokes: list = strokes
+		cls.strokes: list = strokes
 
-        cls.lexems: dict = json.loads(open(file='lexems.json', mode='r', encoding='UTF-8').read())
+		cls.lexems: dict = json.loads(open(file='lexems.json', mode='r', encoding='UTF-8').read())
 
-        cls.__find_lexems()
+		cls.__find_lexems()
+
+#Lexer(['[$ debug   gg hh $]', '[[ $GUI ]]'])
