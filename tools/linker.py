@@ -11,13 +11,24 @@ class Linker:
         def __new__(cls): ...
 
         @staticmethod
+        def __type_conversion(var_value: str):
+
+            if '\"' in var_value:
+
+                return var_value.replace('\"', '')
+            
+            else:
+
+                return var_value
+
+        @staticmethod
         def get_var(template_name: str, key: any):
 
-            var: str | None = os.environ.get(key=f'{template_name.replace(".", "_")}_{key}')
+            var_value: str | None = os.environ.get(key=f'{template_name.replace(".", "_")}_{key}')
 
-            if var != None:
+            if var_value != None:
 
-                return var
+                return Linker.Storage.__type_conversion(var_value=var_value)
 
             return False
 

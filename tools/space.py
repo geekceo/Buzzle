@@ -1,4 +1,5 @@
 from tools import linker
+import re
 
 
 class Space:
@@ -12,25 +13,24 @@ class Space:
 
         if self.desk == 'DEBUG':
 
-            units: list = []
+            innerText: str
 
             print(self.value)
 
-            for unit in self.value:
+            ''' Find char '$' to check if variable '''
 
-                '''Look for variables in text arg'''
-                if '$' in unit:
+            var_name = re.findall(pattern=r'(?<=\$)([^1-90 ]\w{0,})\b', string=self.value)
 
-                    unit = unit.replace('$', '') # remove var buzzle char to get var name
+            if var_name:
 
-                    units.append(linker.Linker.Storage.get_var(template_name='test.html', key=unit)) # get var value
+                innerText = linker.Linker.Storage.get_var(template_name='test.html', key=var_name[0])
 
-                else:
+            else:
 
-                    units.append(unit)
+                innerText = self.value
 
 
-            space = f"<h1>{' '.join(units)}</h1>" # create debug tag via <h1>
+            space = f"<h1>{innerText}</h1>" # create debug tag via <h1>
 
         '''Look for varible assignment'''
         if self.desk == 'LET':

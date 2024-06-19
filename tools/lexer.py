@@ -43,8 +43,19 @@ class Lexer:
 
 				elif lexem_data['lexem_type'] == 'LET':
 
+					var_value: str | int = ''
+
 					var_name = re.findall(pattern=r'(?<=let)\s{0,}\S{0,}\s{0,}(?=\=)', string=func_block[0])[0].strip()
-					var_value = re.findall(pattern=r'(?<=\=)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])[0].strip()
+					var_value_string = re.findall(pattern=r'(?<=\=)\s{0,}\".{0,}\"\s{0,}(?=\$)', string=func_block[0])
+					var_value_int = re.findall(pattern=r'(?<=\=)\s{0,}\d{0,}\s{0,}(?=\$)', string=func_block[0])
+
+					if var_value_string:
+
+						var_value = var_value_string[0].strip()
+
+					elif var_value_int:
+
+						var_value = var_value_int[0].strip()
 
 					html_record = space.Space(desk=lexem_data['lexem_type'], value=(var_name, var_value))
 
