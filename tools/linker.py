@@ -21,14 +21,15 @@ class Linker:
 
                 return var_value
 
+        ''' Conversion for refactor variable value to original type (without quotes and e.t.c.) '''
         @staticmethod
-        def get_var(template_name: str, key: any):
+        def get_var(template_name: str, key: any, conversion: bool = True):
 
             var_value: str | None = os.environ.get(key=f'{template_name.replace(".", "_")}_{key}')
 
             if var_value != None:
 
-                return Linker.Storage.__type_conversion(var_value=var_value)
+                return Linker.Storage.__type_conversion(var_value=var_value) if conversion else var_value
 
             return False
 
@@ -53,6 +54,8 @@ class Linker:
 
         @classmethod
         def write_template(cls, template: str, stroke: str) -> None:
+
+            #print(stroke)
 
             cls.__template_storage[template].append(stroke)
 

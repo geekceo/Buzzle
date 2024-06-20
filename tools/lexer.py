@@ -61,13 +61,32 @@ class Lexer:
 
 			elif var_block:
 
-				...
+				for block in var_block:
+					
+					var_name = var_name = re.findall(pattern=r'(?<=\$)([^1-90 ]\w{0,})\b', string=block)[0].strip()
+
+					var_value: str = ''
+
+					if re.findall(pattern=f'(?<=\").{{0,}}\[\[ \${var_name} \]\].{{0,}}?(?=\")', string=stroke):
+
+						var_value = linker.Linker.Storage.get_var(template_name='test.html', key=var_name, conversion=True)
+
+					else:
+						var_value = linker.Linker.Storage.get_var(template_name='test.html', key=var_name, conversion=False)
+
+					print(var_value)
+
+					stroke = stroke.replace(block, var_value, 1)
+
+				html_record = stroke
 
 			else:
 
 				html_record = stroke
 
 			record: str = html_record.get_space() if isinstance(html_record, space.Space) else html_record
+
+			#print(record)
 
 			linker.Linker.Storage.write_template(template='base.html', stroke=record)
 

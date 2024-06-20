@@ -15,7 +15,7 @@ class Space:
 
             innerText: str
 
-            print(self.value)
+            #print(self.value)
 
             ''' Find char '$' to check if variable '''
 
@@ -32,12 +32,12 @@ class Space:
 
             space = f"<h1>{innerText}</h1>" # create debug tag via <h1>
 
-        '''Look for varible assignment'''
-        if self.desk == 'LET':
+        # Look for varible assignment
+        elif self.desk == 'LET':
 
             key, value = self.value
 
-            print(f'{key} : {value}')
+            #print(f'{key} : {value}')
 
             linker.Linker.Storage.set_var(template_name='test.html', key=key, value=value)
 
@@ -45,10 +45,12 @@ class Space:
 
         #print(space)
 
-        '''if variable mech was founded'''
-        if '[[' in self.desk:
+        # if variable mech was founded
+        elif '[[' in self.desk:
 
             space = self.value
+        
+        #print(space)
 
         return space
 
