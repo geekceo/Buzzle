@@ -7,3 +7,5 @@ controllers.py
 templates
 templates/*
 error_temp
+notifications
+notifications/*

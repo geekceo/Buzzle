@@ -31,7 +31,8 @@ class Lexer:
 
 				for lexem, desk in cls.lexems.items():
 
-					re_lexem = re.findall(pattern=f'({lexem})', string=func_block[0])
+					re_lexem = re.findall(pattern=f'\\b{lexem}\\b', string=func_block[0])
+
 
 					if re_lexem: 
 
