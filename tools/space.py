@@ -1,5 +1,6 @@
 from tools import linker
 import re
+import config
 
 
 class Space:
@@ -35,13 +36,17 @@ class Space:
         # Look for varible assignment
         elif self.desk == 'LET':
 
+            space: str = ''
+
             key, value = self.value
 
             #print(f'{key} : {value}')
 
             linker.Linker.Storage.set_var(template_name=self.template_name, key=key, value=value)
 
-            space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
+            if config.VARIABLE_VIEW:
+
+                space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
 
         #print(space)
 
