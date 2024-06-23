@@ -6,3 +6,4 @@ urls.py
 controllers.py
 templates
 templates/*
+error_temp

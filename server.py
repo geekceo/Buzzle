@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.client import NOT_FOUND
 from tools import parser, webserver, linker
 import urls
 import json
@@ -17,14 +18,58 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         #self.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
 
         '''Loop for all urls from custom urls.py file'''
+
+        url_path: str = None
+        url_query: str = None
+
+        if '?' in self.path:
+
+            url_path, url_query = (data for data in self.path.split('?'))
+
+            url_query = url_query.split('&')
+
+            __query_buffer: dict = {}
+
+            for data in url_query:
+
+                key, value = data.split('=')[0], data.split('=')[1]
+
+                if (key in __query_buffer) and (isinstance(__query_buffer[key], list)):
+
+                    __query_buffer[key].append(value)
+
+                elif (key in __query_buffer) and (not isinstance(__query_buffer[key], list)):
+
+                    __query_buffer[key] = [__query_buffer[key], value]
+
+                else:
+
+                    __query_buffer[data.split('=')[0]] = data.split('=')[1]
+
+            url_query = __query_buffer
+
+            del __query_buffer
+
+        else:
+
+            url_path = self.path
+
+        print(url_path)
+
         for path in urls.urlpathes:
 
-            if path.path in self.path:
+            if path.path == url_path:
+
+                self.__dict__['query'] = url_query
 
                 '''Send first request as argument to parse base data'''
                 request: webserver.Request = webserver.Request(b_request=self.__dict__)
 
                 path.controller(request)
+
+            break
+
+        
 
     def do_POST(self):
 
@@ -32,9 +77,20 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
+        url_path: str = None
+        url_query: str = None
+
+        if '?' in self.path:
+
+            url_path, url_query = (data for data in self.path.split('?'))
+
+        else:
+
+            url_path = self.path
+
         for path in urls.urlpathes:
 
-            if path.path in self.path:
+            if path.path == url_path:
 
                 '''Send first request as argument to parse base data'''
                 request: webserver.Request = webserver.Request(b_request=self.__dict__)

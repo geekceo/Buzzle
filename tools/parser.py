@@ -1,6 +1,7 @@
 import json
 from tools import lexer, space, linker
 import config
+import os
 
 '''
     * Parser to divide html/css code to strokes
@@ -8,33 +9,33 @@ import config
 '''
 class Parser:
 
-    def __init__(self, html: str):
+    def __init__(self, template_name: str):
 
-        self.html = html
+        self.template_name = template_name
 
 
     def parse(self):
 
-        strokes = open(file=f'{config.BASE_DIR}/templates/{self.html}', mode='r', encoding='UTF-8').read().split('\n')
+        strokes = open(file=f'{config.BASE_DIR}/templates/{self.template_name}', mode='r', encoding='UTF-8').read().split('\n')
 
-        with open(file='output.html', mode='w', encoding='UTF-8') as output:
+        #with open(file='output.html', mode='w', encoding='UTF-8') as output:
+#
+        #    output.write('\n'.join(strokes))
 
-            output.write('\n'.join(strokes))
-
-        lexer.Lexer(strokes=strokes)
+        lexer.Lexer(strokes=strokes, template_name=self.template_name)
 
     @staticmethod
-    def write(html_record: str | space.Space = None):
+    def write(temlate_name: str, html_record: str | space.Space = None):
 
         #print(isinstance(html_record, space.Space))
 
         #record: str = html_record.get_space() if isinstance(html_record, space.Space) else html_record
 
-        with open(file='output.html', mode='w', encoding='UTF-8') as output:
+        with open(file=f'{os.path.dirname(p=__file__)}/../docs/output.html', mode='w', encoding='UTF-8') as output:
 
             #output.write(f'{record}\n')
 
-            output.write(linker.Linker.Storage.get_template_content(template='base.html'))
+            output.write(linker.Linker.Storage.get_template_content(template=temlate_name))
 
             
 

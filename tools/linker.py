@@ -43,6 +43,8 @@ class Linker:
 
             for template in templates:
 
+                #print(template)
+
                 cls.__template_storage[template] = []
 
 
@@ -70,7 +72,9 @@ class Linker:
 
     class DOM:
 
-        def render(request: webserver.Request, template_name: str, context: dict = None) -> None:
+        def render(request: webserver.Request = None, template_name: str = 'buzzle_error', context: dict = None) -> None:
+
+            print(Linker.Storage.get_template_content(template=template_name))
 
             if context != None:
 
@@ -78,6 +82,20 @@ class Linker:
 
                     Linker.Storage.set_var(template_name=template_name, key=key, value=value)
 
-            parser.Parser(html=template_name).parse()
+            #request.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
 
-            request.wfile.write(bytes(open(file='output.html', mode='r').read(), encoding='UTF-8'))
+            if template_name != 'buzzle_error':
+
+                parser.Parser(template_name=template_name).parse()
+
+                request.wfile.write(bytes(
+                    Linker.Storage.get_template_content(template=template_name),
+                    encoding='UTF-8'
+                ))
+
+            else:
+
+                request.wfile.write(bytes(
+                    open(file=f'{os.path.dirname(p=__file__)}/../docs/error.html').read(),
+                    encoding='UTF-8'
+                ))

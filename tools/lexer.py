@@ -1,13 +1,19 @@
 from tools import parser, space, linker
 import re
+import os
 import json
 
 class Lexer:
 
+	LIB_DIR: str = os.path.dirname(p=__file__)
+
 	@classmethod
 	def __find_lexems(cls):
 
-		for stroke in cls.strokes:
+		error: bool = False
+		error_temp: str = ''
+
+		for index, stroke in enumerate(cls.strokes):
 
 			'''Find a blocks'''
 
@@ -21,7 +27,7 @@ class Lexer:
 
 				'''Find existing lexem in current block'''
 
-				lexem_data: str
+				lexem_data: str = None
 
 				for lexem, desk in cls.lexems.items():
 
@@ -33,13 +39,33 @@ class Lexer:
 						
 						break
 
+				if lexem_data == None:
+
+					with open(file=f'{cls.LIB_DIR}/../docs/error_temp', mode='r') as file:
+
+						error_temp = file.read()
+
+					error_temp = error_temp.replace('{title}', f'Unknown command in line {index+1}: \"{func_block[0]}\"').replace('{info}', 'Bla\nBla\nBla')
+
+					with open(file=f'{cls.LIB_DIR}/../docs/error.html', mode='w') as file:
+
+						file.write(error_temp)
+
+					error = True
+
+					linker.Linker.Storage.init_templates(templates=[cls.template_name])
+
+					break
+
+				#print(stroke)
+
 				if lexem_data['lexem_type'] == 'DEBUG':
 
 					re_arg = re.findall(pattern=r'(?<=debug)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])
 
 					value = re_arg[0].strip()
 
-					html_record = space.Space(desk=lexem_data['lexem_type'], value=value)
+					html_record = space.Space(template_name=cls.template_name, desk=lexem_data['lexem_type'], value=value)
 
 				elif lexem_data['lexem_type'] == 'LET':
 
@@ -57,7 +83,7 @@ class Lexer:
 
 						var_value = var_value_int[0].strip()
 
-					html_record = space.Space(desk=lexem_data['lexem_type'], value=(var_name, var_value))
+					html_record = space.Space(template_name=cls.template_name, desk=lexem_data['lexem_type'], value=(var_name, var_value))
 
 			elif var_block:
 
@@ -69,12 +95,12 @@ class Lexer:
 
 					if re.findall(pattern=f'(?<=\").{{0,}}\[\[ \${var_name} \]\].{{0,}}?(?=\")', string=stroke):
 
-						var_value = linker.Linker.Storage.get_var(template_name='test.html', key=var_name, conversion=True)
+						var_value = linker.Linker.Storage.get_var(template_name=cls.template_name, key=var_name, conversion=True)
 
 					else:
-						var_value = linker.Linker.Storage.get_var(template_name='test.html', key=var_name, conversion=False)
+						var_value = linker.Linker.Storage.get_var(template_name=cls.template_name, key=var_name, conversion=False)
 
-					print(var_value)
+					#print(var_value)
 
 					stroke = stroke.replace(block, var_value, 1)
 
@@ -88,18 +114,26 @@ class Lexer:
 
 			#print(record)
 
-			linker.Linker.Storage.write_template(template='base.html', stroke=record)
+			linker.Linker.Storage.write_template(template=cls.template_name, stroke=record)
 
-		parser.Parser.write()
+		if error:
+
+			for stroke in error_temp.split('\n'):
+
+				linker.Linker.Storage.write_template(template=cls.template_name, stroke=stroke)
+
+		#parser.Parser.write(temlate_name=cls.template_name)
 
 		#print(linker.Linker.Storage.get_template_content(template='base.html'))
 
 
 
 
-	def __new__(cls, strokes: list):
+	def __new__(cls, strokes: list, template_name: str):
         
 		cls.strokes: list = strokes
+
+		cls.template_name = template_name
 
 		cls.lexems: dict = json.loads(open(file='lexems.json', mode='r', encoding='UTF-8').read())
 

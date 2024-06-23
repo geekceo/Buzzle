@@ -23,7 +23,7 @@ class Space:
 
             if var_name:
 
-                innerText = linker.Linker.Storage.get_var(template_name='test.html', key=var_name[0])
+                innerText = linker.Linker.Storage.get_var(template_name=self.template_name, key=var_name[0])
 
             else:
 
@@ -39,25 +39,26 @@ class Space:
 
             #print(f'{key} : {value}')
 
-            linker.Linker.Storage.set_var(template_name='test.html', key=key, value=value)
+            linker.Linker.Storage.set_var(template_name=self.template_name, key=key, value=value)
 
             space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
 
         #print(space)
 
         # if variable mech was founded
-        elif '[[' in self.desk:
-
-            space = self.value
-        
+        #elif '[[' in self.desk:
+#
+        #    space = self.value
+        #
         #print(space)
 
         return space
 
-    def __init__(self, desk: str = 'DEBUG', value: any = None):
+    def __init__(self, template_name: str, desk: str = 'DEBUG', value: any = None):
 
         self.desk: str = desk
         self.value: any = value
+        self.template_name: str = template_name
 
         #print(f'{self.desk}: {self.value}')
 
