@@ -26,9 +26,9 @@ class Request:
 
         self.query_dict = self.__get_query(path=self.path)
 
-        self.GET = self.query_dict if self.command == 'GET' and self.query_dict else True if self.command == 'GET' else False
+        self.GET = True if self.command == 'GET' else False
 
-        self.POST = self.query_dict if self.command == 'POST' and self.query_dict else True if self.command == 'POST' else False
+        self.POST = True if self.command == 'POST' else False
 
         #print(self.GET)
         #print(self.POST)
