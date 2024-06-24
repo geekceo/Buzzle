@@ -1,0 +1,1 @@
+<script>async function doit(){if("granted"===await Notification.requestPermission()){new Notification("{title}",{body:"{text}",icon:"{icon}"})}}doit();</script>

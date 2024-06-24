@@ -60,6 +60,8 @@ class Lexer:
 
 				#print(stroke)
 
+				#print(lexem_data)
+
 				if lexem_data['lexem_type'] == 'DEBUG':
 
 					re_arg = re.findall(pattern=r'(?<=debug)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])
@@ -85,6 +87,14 @@ class Lexer:
 						var_value = var_value_int[0].strip()
 
 					html_record = space.Space(template_name=cls.template_name, desk=lexem_data['lexem_type'], value=(var_name, var_value))
+
+				elif lexem_data['lexem_type'] == 'NOTIFICATION':
+
+					re_arg = re.findall(pattern=r'(?<=notification)\s{0,}\S{0,}\s{0,}(?=\$)', string=func_block[0])
+
+					value = re_arg[0].strip()
+
+					html_record = space.Space(template_name=cls.template_name, desk=lexem_data['lexem_type'], value=value)
 
 			elif var_block:
 

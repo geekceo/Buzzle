@@ -1,7 +1,10 @@
 from tools import linker
 import re
+import os
 import config
+import json
 
+LIB_DIR: str = os.path.dirname(p=__file__)
 
 class Space:
 
@@ -36,8 +39,6 @@ class Space:
         # Look for varible assignment
         elif self.desk == 'LET':
 
-            space: str = ''
-
             key, value = self.value
 
             #print(f'{key} : {value}')
@@ -47,6 +48,20 @@ class Space:
             if config.VARIABLE_VIEW:
 
                 space = f'<input type="hidden" id="var_{key}" name="{key}" value={value} />' # create hidden inpout for save var key and value for using by JS
+
+        elif self.desk == 'NOTIFICATION':
+
+            if f'{self.value}.json' in config.NOTIFICATIONS:
+
+                notif_temp = open(file=f'{LIB_DIR}/../docs/notif_temp', mode='r').read()
+
+                notif_data = json.load(open(file=f'{config.BASE_DIR}/notifications/{self.value}.json', mode='r', encoding='UTF-8'))
+
+                notif_temp = notif_temp.replace('{title}', notif_data['title']).replace('{text}', notif_data['text']).replace('{icon}', notif_data['icon'])
+
+                print(notif_temp)
+
+                space = notif_temp
 
         #print(space)
 
